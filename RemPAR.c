@@ -167,7 +167,7 @@ edgelist* kruskal(edgelist* el){
 	edgelist* elr=alloctree(el->n);
 	unionfind *uf=allocuf(el->n);
 
-	#pragma omp parallel for shared(u,v)
+	#pragma omp parallel for private(u,v) shared(uf)
 	for (i=0;i<el->e;i++){
 		u=el->edges[i].s;
 		v=el->edges[i].t;
