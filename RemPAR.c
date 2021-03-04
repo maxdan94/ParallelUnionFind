@@ -154,8 +154,9 @@ edgelist* kruskal(edgelist* el){
 	omp_lock_t *lock=malloc(uf->n*sizeof(omp_lock_t));
 
 	for (i=0; i<uf->n; i++)
-        omp_init_lock(&(lock[i]));
+		omp_init_lock(&(lock[i]));
 
+	time_t t1=time(NULL);
 	#pragma omp parallel for private(u,v) shared(uf,lock)
 	for (i=0;i<el->e;i++){
 		u=el->edges[i].s;
@@ -166,6 +167,10 @@ edgelist* kruskal(edgelist* el){
 			//elr->edges[elr->e++]=el->edges[i];
 		}
 	}
+	time_t t2=time(NULL);
+
+	printf("- Time parallel session = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
+
 	return elr;
 }
 
