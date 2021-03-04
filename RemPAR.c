@@ -97,23 +97,15 @@ unionfind* allocuf(unsigned n){
 	return uf;
 }
 
-/*//create a singleton {x}
-void MakeSet(unsigned x, unionfind *uf){
-	uf->p[x]=x;
-	uf->r[x]=0;
-}
-//Decided to do create directly all singletons
-*/
-
 //Merge the clusters of x and y returns 1 iff x and y belonged to the same cluster, 0 otherwise.
-bool Union(unsigned x, unsigned y, unionfind *uf,omp_lock_t *lock){
+bool Union(unsigned x, unsigned y, unionfind *uf, omp_lock_t *lock){
 	unsigned i, tmp;
 	bool b;
 
 	while (uf->p[x] != uf->p[y]){
 		if (uf->p[x]<uf->p[y]){
 			if (x==uf->p[x]){
-    				omp_set_lock(&(lock[x]));
+				omp_set_lock(&(lock[x]));
 				b=0;
 				if (x==uf->p[x]){
 					uf->p[x]=uf->p[y];
@@ -129,7 +121,7 @@ bool Union(unsigned x, unsigned y, unionfind *uf,omp_lock_t *lock){
 		}
 		if (uf->p[x]>uf->p[y]){
 			if (y==uf->p[y]){
-    				omp_set_lock(&(lock[y]));
+				omp_set_lock(&(lock[y]));
 				b=0;
 				if (y==uf->p[y]){
 					uf->p[y]=uf->p[x];
@@ -162,14 +154,14 @@ edgelist* kruskal(edgelist* el){
 	omp_lock_t *lock=malloc(uf->n*sizeof(omp_lock_t));
 
 	for (i=0; i<uf->n; i++)
-        	omp_init_lock(&(lock[i]));
+        omp_init_lock(&(lock[i]));
 
 	#pragma omp parallel for private(u,v) shared(uf,lock)
 	for (i=0;i<el->e;i++){
 		u=el->edges[i].s;
 		v=el->edges[i].t;
 		if (Union(u,v,uf,lock)==0){
-    			#pragma omp atomic
+			#pragma omp atomic
 			elr->e++;
 			//elr->edges[elr->e++]=el->edges[i];
 		}
