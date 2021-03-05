@@ -157,7 +157,7 @@ edgelist* kruskal(edgelist* el){
 		omp_init_lock(&(lock[i]));
 
 	time_t t1=time(NULL);
-	#pragma omp parallel for private(u,v) shared(uf,lock) schedule(dynamic, 1000)
+	#pragma omp parallel for private(u,v) shared(uf,lock) //schedule(dynamic, 1000)
 	for (i=0;i<el->e;i++){
 		u=el->edges[i].s;
 		v=el->edges[i].t;
