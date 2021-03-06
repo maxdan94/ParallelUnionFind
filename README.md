@@ -18,7 +18,7 @@ Parallel implementation of Union Find following that paper: https://papers-gamma
 
 "edgelist.txt" should contain one edge on each line "u v", where u and v are node IDs (unsigned int). 
 
-Will print the number of edges in a spanning forest
+Will print the number of edges in a spanning forest (Rem_verif can output wrong result: a few more edges than what should be)
 
 ## Initial contributors
 
