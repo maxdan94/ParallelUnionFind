@@ -99,7 +99,7 @@ unionfind* allocuf(unsigned long long n){
 
 //Merge the clusters of x and y returns 1 iff x and y belonged to the same cluster, 0 otherwise.
 bool Union(unsigned long long x, unsigned long long y, unionfind *uf, omp_lock_t *lock){
-	unsigned long long i, tmp;
+	unsigned long long tmp;
 	bool b;
 
 	while (uf->p[x] != uf->p[y]){
