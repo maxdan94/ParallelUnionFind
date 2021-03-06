@@ -105,13 +105,13 @@ bool Union(unsigned long long x, unsigned long long y, unionfind *uf, omp_lock_t
 	while (uf->p[x] != uf->p[y]){
 		if (uf->p[x]<uf->p[y]){
 			if (x==uf->p[x]){
-				omp_set_lock(&(lock[x]));
+				//omp_set_lock(&(lock[x]));
 				b=0;
 				if (x==uf->p[x]){
 					uf->p[x]=uf->p[y];
 					b=1;
 				}
-				omp_unset_lock(&(lock[x]));
+				//omp_unset_lock(&(lock[x]));
 				if (b)
 					return 0;
 			}
@@ -121,13 +121,13 @@ bool Union(unsigned long long x, unsigned long long y, unionfind *uf, omp_lock_t
 		}
 		if (uf->p[x]>uf->p[y]){
 			if (y==uf->p[y]){
-				omp_set_lock(&(lock[y]));
+				//omp_set_lock(&(lock[y]));
 				b=0;
 				if (y==uf->p[y]){
 					uf->p[y]=uf->p[x];
 					b=1;
 				}
-				omp_unset_lock(&(lock[y]));
+				//omp_unset_lock(&(lock[y]));
 				if (b)
 					return 0;
 			}
