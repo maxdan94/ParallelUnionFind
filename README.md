@@ -5,13 +5,16 @@ Parallel implementation of Union Find following that paper: https://papers-gamma
 ## To compile
 
 - "gcc Rem.c -o Rem -O3"
-- "gcc RemPAR.c -o RemPAR -fopenmp -O3"
+- "gcc Rem_lock.c -o Rem_lock -fopenmp -O3"
+- "gcc Rem_verif.c -o Rem_verif -fopenmp -O3"
+
+
 
 ## To execute
 
 - "./Rem edgelist.txt"
-
-- "./RemPAR nthreads edgelist.txt"
+- "./Rem_lock nthreads edgelist.txt"
+- "./Rem_verif nthreads edgelist.txt"
 
 "edgelist.txt" should contain one edge on each line "u v", where u and v are node IDs (unsigned int). 
 
