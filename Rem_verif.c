@@ -164,7 +164,7 @@ unsigned long long kruskal(edgelist* el){
 	edgelist* elr;
 
 	time_t t1=time(NULL);
-	#pragma omp parallel private(u,v,elr) shared(el,uf,e)
+	#pragma omp parallel private(elr,i,u,v) shared(el,uf,e)
 	{
 		elr=alloctree(el->n);
 		#pragma omp for

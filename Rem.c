@@ -3,7 +3,7 @@ Maximilien Danisch
 
 Info:
 Feel free to use these lines as you wish. 
-Efficient implementation of Kruskal's algorithm using a UnionFind datastruture (implemented using Rem'a algorithms).
+Efficient implementation of Kruskal's algorithm using a UnionFind datastruture (implemented using Rem's algorithms).
 - https://en.wikipedia.org/wiki/Kruskal's_algorithm
 - https://en.wikipedia.org/wiki/Disjoint-set_data_structure
 - https://papers-gamma.link/paper/193
