@@ -3,7 +3,7 @@ Maximilien Danisch
 
 Info:
 Feel free to use these lines as you wish. 
-Efficient implementation of Kruskal's algorithm using a UnionFind datastruture (implemented using Rem'a algorithms).
+Efficient implementation of Kruskal's algorithm using a UnionFind datastruture.
 - https://en.wikipedia.org/wiki/Kruskal's_algorithm
 - https://en.wikipedia.org/wiki/Disjoint-set_data_structure
 - https://papers-gamma.link/paper/193
@@ -11,16 +11,15 @@ Efficient implementation of Kruskal's algorithm using a UnionFind datastruture (
 Should scale to at least one billion edges on a commodity machine.
 
 To compile:
-"gcc Rem.c -O9 -o Rem".
+"gcc UnionFind.c -O9 -o UnionFind".
 
 To execute:
-./kruskal edgelist.txt res.txt
+./UnionFind edgelist.txt
 edgelist.txt should contain one edge on each line "u v" u and v are node id (unsigned long long int)
 */
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <time.h>
 
 #define NLINKS 100000000 //maximum number of edges for memory allocation, will increase if needed
@@ -71,6 +70,7 @@ edgelist* readedgelist(char* input){
 typedef struct {
 	unsigned long long n;//number of objects
 	unsigned long long *p;//parents
+	unsigned char *r;//ranks
 } unionfind;
 
 unionfind* allocuf(unsigned long long n){
@@ -78,47 +78,47 @@ unionfind* allocuf(unsigned long long n){
 	unionfind* uf=malloc(sizeof(unionfind));
 	uf->n=n;
 	uf->p=malloc(n*sizeof(unsigned long long));
+	uf->r=malloc(n*sizeof(unsigned char));
 	for (i=0;i<n;i++){
 		uf->p[i]=i;
+		uf->r[i]=0;
 	}
 	return uf;
 }
 
-
-//Merge the clusters of x and y returns 1 iff x and y belonged to the same cluster, 0 otherwise.
-bool Union(unsigned long long x, unsigned long long y, unionfind *uf){
-	unsigned long long tmp;
-	while (uf->p[x] != uf->p[y]){
-		if (uf->p[x]<uf->p[y]){
-			if (x==uf->p[x]){
-				uf->p[x]=uf->p[y];
-				return 0;
-			}
-			tmp=uf->p[x];
-			uf->p[x]=uf->p[y];
-			x=tmp;
-		}
-		if (uf->p[x]>uf->p[y]){
-			if (y==uf->p[y]){
-				uf->p[y]=uf->p[x];
-				return 0;
-			}
-			tmp=uf->p[y];
-			uf->p[y]=uf->p[x];
-			y=tmp;
-		}
+//Find the cluster of element x
+unsigned long long Find(unsigned long long x, unionfind *uf){
+	if (uf->p[x]!=x){
+		uf->p[x]=Find(uf->p[x],uf);
 	}
-	return 1;
+	return uf->p[x];
+}
+
+//Merge the clusters xr and yr
+void Union(unsigned long long xr, unsigned long long yr, unionfind *uf){
+	if (uf->r[xr] < uf->r[yr]){
+     		uf->p[xr] = yr;
+	}
+	else if (uf->r[xr] > uf->r[yr]) {
+		uf->p[yr] = xr;
+	}
+	else {
+		uf->p[yr] = xr;
+		uf->r[xr] = uf->r[xr]+1;
+	}
 }
 
 unsigned long long kruskal(edgelist* el){
-	unsigned long long i,u,v,e=0;
+	unsigned long long i,u,v,p,q,e=0;
 	unionfind *uf=allocuf(el->n);
 
 	for (i=0;i<el->e;i++){
 		u=el->edges[i].s;
 		v=el->edges[i].t;
-		if (Union(u,v,uf)==0){
+		p=Find(u,uf);
+		q=Find(v,uf);
+		if (p!=q){
+			Union(p,q,uf);
 			e++;
 		}
 	}
@@ -152,6 +152,6 @@ int main(int argc,char** argv){
 	t2=time(NULL);
 	printf("- Time = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
 	printf("- Overall time = %ldh%ldm%lds\n",(t2-t0)/3600,((t2-t0)%3600)/60,((t2-t0)%60));
+
 	return 0;
 }
-

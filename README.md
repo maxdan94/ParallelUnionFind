@@ -4,6 +4,7 @@ Parallel implementation of Union Find following that paper: https://papers-gamma
 
 ## To compile
 
+- "gcc UnionFind.c -o UnionFind -O3"
 - "gcc Rem.c -o Rem -O3"
 - "gcc Rem_lock.c -o Rem_lock -fopenmp -O3"
 - "gcc Rem_verif.c -o Rem_verif -fopenmp -O3"
@@ -12,6 +13,7 @@ Parallel implementation of Union Find following that paper: https://papers-gamma
 
 ## To execute
 
+- "./UnionFind edgelist.txt"
 - "./Rem edgelist.txt"
 - "./Rem_lock nthreads edgelist.txt"
 - "./Rem_verif nthreads edgelist.txt"

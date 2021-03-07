@@ -3,7 +3,7 @@ Maximilien Danisch
 
 Info:
 Feel free to use these lines as you wish. 
-Efficient implementation of Kruskal's algorithm using a UnionFind datastruture (implemented using Rem'a algorithms).
+Efficient implementation of Kruskal's algorithm using a UnionFind datastruture (implemented using Rem's algorithm).
 - https://en.wikipedia.org/wiki/Kruskal's_algorithm
 - https://en.wikipedia.org/wiki/Disjoint-set_data_structure
 - https://papers-gamma.link/paper/193
@@ -11,12 +11,11 @@ Efficient implementation of Kruskal's algorithm using a UnionFind datastruture (
 Should scale to at least one billion edges on a commodity machine.
 
 To compile:
-"gcc kruskal.c -O9 -o kruskal".
+"gcc Rem_verif.c -o Rem_verif -fopenmp -O3".
 
 To execute:
-./kruskal edgelist.txt res.txt
-edgelist.txt should contain one edge on each line "u v w" u and v are node id (unsigned long long int) and w is the edge weight (double).
-res.txt will contained the list of the edges of the resulting tree
+./Rem_verif nthreads edgelist.txt
+edgelist.txt should contain one edge on each line "u v" u and v are node id (unsigned long long int)
 */
 
 #include <stdlib.h>
@@ -30,7 +29,6 @@ res.txt will contained the list of the edges of the resulting tree
 typedef struct {
 	unsigned long long s;
 	unsigned long long t;
-	//double w;
 } edge;
 
 typedef struct {
@@ -45,15 +43,6 @@ inline unsigned long long int max3(unsigned long long int a,unsigned long long i
 	return (a>c) ? a : c;
 }
 
-/*
-int cmpfunc (const void * a, const void * b){
-	if ( ((edge*)a)->w>((edge*)b)->w ){
-		return 1;
-	}
-	return -1;
-}
-*/
-
 edgelist* readedgelist(char* input){
 	unsigned long long e1=NLINKS;
 	edgelist *g=malloc(sizeof(edgelist));
@@ -63,7 +52,7 @@ edgelist* readedgelist(char* input){
 	g->e=0;
 	file=fopen(input,"r");
 	g->edges=malloc(e1*sizeof(edge));
-	while (fscanf(file,"%llu %llu\n", &(g->edges[g->e].s), &(g->edges[g->e].t))==2){//, &(g->edges[g->e].w))==3) {//Add one edge
+	while (fscanf(file,"%llu %llu\n", &(g->edges[g->e].s), &(g->edges[g->e].t))==2){
 		g->n=max3(g->n,g->edges[g->e].s,g->edges[g->e].t);
 		g->e++;
 		if (g->e==e1) {
@@ -76,7 +65,6 @@ edgelist* readedgelist(char* input){
 
 	g->edges=realloc(g->edges,g->e*sizeof(edge));
 
-	//qsort(g->edges,g->e,sizeof(edge),cmpfunc);
 	return g;
 }
 
@@ -162,7 +150,6 @@ void Union_verif(unsigned long long x, unsigned long long y, unionfind *uf){
 	}
 }
 
-
 edgelist *alloctree(unsigned long long n){
 	edgelist *el=malloc(sizeof(edgelist));
 	el->edges=malloc(n*sizeof(edge));
@@ -177,7 +164,7 @@ unsigned long long kruskal(edgelist* el){
 	edgelist* elr;
 
 	time_t t1=time(NULL);
-	#pragma omp parallel private(u,v,elr) shared(uf)
+	#pragma omp parallel private(u,v,elr) shared(el,uf,e)
 	{
 		elr=alloctree(el->n);
 		#pragma omp for
@@ -187,7 +174,6 @@ unsigned long long kruskal(edgelist* el){
 			if (Union(u,v,uf,elr)==0){
 				#pragma omp atomic
 				e++;
-				//elr->edges[elr->e++]=el->edges[i];
 			}
 		}
 		#pragma omp barrier
@@ -204,18 +190,6 @@ unsigned long long kruskal(edgelist* el){
 	printf("- Time parallel session = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
 
 	return e;
-}
-
-void printres(edgelist* el, char* output){
-	FILE* file=fopen(output,"w");
-	//double s=0;
-	unsigned long long i;
-	for (i=0;i<el->e;i++){
-		fprintf(file,"%llu %llu\n",el->edges[i].s,el->edges[i].t);//,el->edges[i].w);
-		//s+=el->edges[i].w;
-	}
-	fclose(file);
-	//return s;
 }
 
 
@@ -244,18 +218,10 @@ int main(int argc,char** argv){
 
 	e=kruskal(el);
 
+	printf("Number of edges in resulting spaning tree: %llu\n",e);
+
 	t2=time(NULL);
 	printf("- Time = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
-	t1=t2;
-
-	printf("Printing result in file %s\n",argv[3]);
-
-	//printres(elr,argv[3]);
-	printf("Number of edges in resulting spaning tree: %llu\n",e);
-	//printf("Sum of the weight in a minimum spaning tree: %le\n",s);
-
-	printf("- Time = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
-
 	printf("- Overall time = %ldh%ldm%lds\n",(t2-t0)/3600,((t2-t0)%3600)/60,((t2-t0)%60));
 
 	return 0;
