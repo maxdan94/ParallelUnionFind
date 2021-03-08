@@ -93,12 +93,14 @@ bool Union(unsigned long long x, unsigned long long y, unionfind *uf){
 				uf->p[x]=uf->p[y];
 				return 0;
 			}
+			x=uf->p[x];
 		}
 		if (uf->p[x]>uf->p[y]){
 			if (y==uf->p[y]){
 				uf->p[y]=uf->p[x];
 				return 0;
 			}
+			y=uf->p[y];
 		}
 	}
 	return 1;
