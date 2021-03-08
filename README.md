@@ -6,6 +6,7 @@ Parallel implementation of Union Find following that paper: https://papers-gamma
 
 - "gcc UnionFind.c -o UnionFind -O3"
 - "gcc Rem.c -o Rem -O3"
+- "gcc Rem_noSplicing.c -o Rem_noSplicing -O3" (very slow for large graphs without the path compression)
 - "gcc Rem_lock.c -o Rem_lock -fopenmp -O3"
 - "gcc Rem_verif.c -o Rem_verif -fopenmp -O3"
 
@@ -15,6 +16,7 @@ Parallel implementation of Union Find following that paper: https://papers-gamma
 
 - "./UnionFind edgelist.txt"
 - "./Rem edgelist.txt"
+- "./Rem_noSplicing edgelist.txt"
 - "./Rem_lock nthreads edgelist.txt"
 - "./Rem_verif nthreads edgelist.txt"
 
